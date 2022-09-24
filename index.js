@@ -32,7 +32,15 @@ const checkDir = (path, isStart = false) => {
 const copyFiles = () => {
     filePaths.forEach(file => {
         try {
-            fs.copyFileSync(`${inRootPath}/${file}`, `${outRootPath}/${file}`)
+            fs.copyFile(`${inRootPath}/${file}`, `${outRootPath}/${file}`, (error) => {
+                if(error){
+                    errorsCopyFiles.push({
+                        file: `${inRootPath}/${file}`,
+                        error
+                    })
+                    console.log(errorsCopyFiles)
+                }
+            })
         } catch (error) {
             errors.push({
                 file: `${inRootPath}/${file}`,
@@ -46,13 +54,12 @@ const main = async () => {
 
     checkDir(inRootPath, true)
 
-    console.log(dirPaths)
-    console.log('------')
-    console.log(filePaths)
-
     copyFiles()
 
-    fs.writeFileSync('./errors.json', JSON.stringify(errors))
+    // console.log(errorsCopyFiles)
+
+    // fs.writeFileSync('./errors.json', JSON.stringify(errors))
+    // fs.writeFileSync('./errorsCopyFiles.json', JSON.stringify(errorsCopyFiles))
 }
 
 main()
